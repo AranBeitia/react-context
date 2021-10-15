@@ -9,6 +9,8 @@ import * as api from "./api";
 import useLocalStorage from "./hooks/useLocalStorage";
 import loadLocalStorageItems from "./utils/loadLocalStorageItems";
 
+import NewProductContext from "./context/NewProductContext";
+
 function buildNewCartItem(cartItem) {
   if (cartItem.quantity >= cartItem.unitsInStock) {
     return cartItem;
@@ -183,7 +185,13 @@ function App() {
     <BrowserRouter>
       <Switch>
         <Route path="/new-product">
-          <NewProduct saveNewProduct={saveNewProduct} />
+          <NewProductContext.Provider
+            value={{
+              saveNewProduct: saveNewProduct,
+            }}
+          >
+            <NewProduct />
+          </NewProductContext.Provider>
         </Route>
         <Route path="/" exact>
           <Home
