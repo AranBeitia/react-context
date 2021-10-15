@@ -1,0 +1,79 @@
+.ItemCard {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2rem;
+
+  &__title {
+    font-size: 1rem;
+    line-height: 1.25rem;
+    font-weight: bold;
+    margin: 0.75rem 0 0 0;
+  }
+
+  &__image-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__image {
+    display: block;
+    width: 100%;
+    height: auth;
+    max-width: 32rem;
+    border-radius: 3px;
+  }
+
+  &__divider {
+    border: 1px solid hsl(200deg 10% 88%);
+    border-radius: 3px;
+    width: 100%;
+    margin: 0.5rem 0;
+  }
+
+  &__description {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    margin: 0;
+  }
+
+  &__meta {
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__icons {
+    display: flex;
+  }
+
+  &__icon {
+    &-row {
+      display: flex;
+      margin-right: 1rem;
+      align-items: center;
+
+      &:last-of-type {
+        margin: 0;
+      }
+    }
+
+    &-popular {
+      color: rgb(4, 105, 0);
+      background-color: #dcf8dc;
+      padding: 0.125rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    &-unpopular {
+      color: rgb(105, 33, 0);
+      background-color: #fae8cc;
+      padding: 0.125rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    &-txt {
+      margin: 0 0 0 0.5rem;
+    }
+  }
+}

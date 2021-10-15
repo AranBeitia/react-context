@@ -1,0 +1,10 @@
+.ShoppingCartItem {
+  &__img {
+    width: 100%;
+    min-width: 4rem;
+    height: 100%;
+    border-radius: 4px;
+    object-fit: cover;
+    background-position: center;
+  }
+}
