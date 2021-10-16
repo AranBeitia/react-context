@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import "./ShoppingCartItem.scss";
 
 import Button from "../Button";
+import HomeContext from "../../context/HomeContext";
 
 function buildSelectOptions(unitsInStock) {
   return Array.from({ length: unitsInStock }, (_value, index) => {
@@ -15,22 +16,8 @@ function buildSelectOptions(unitsInStock) {
   });
 }
 
-function ShoppingCartItem({
-  id,
-  img,
-  title,
-  price,
-  quantity,
-  unitsInStock,
-  handleChange,
-  handleRemove,
-}) {
-  function onHandleChange(event) {
-    handleChange(event, id);
-  }
-  function onHandleRemove() {
-    handleRemove(id);
-  }
+function ShoppingCartItem({ id, img, title, price, quantity, unitsInStock }) {
+  const { handleRemove, handleChange } = useContext(HomeContext);
 
   return (
     <div className="col">
@@ -57,15 +44,15 @@ function ShoppingCartItem({
                     <div className="col col-6 col-lg-4">
                       <select
                         className="custom-select"
-                        onChange={onHandleChange}
-                        onBlur={onHandleChange}
+                        onChange={() => handleChange(id)}
+                        onBlur={() => handleChange(id)}
                         value={quantity}
                       >
                         {buildSelectOptions(unitsInStock)}
                       </select>
                     </div>
                     <div className="col col-6 col-lg-8">
-                      <Button onClick={onHandleRemove}>Remove</Button>
+                      <Button onClick={() => handleRemove(id)}>Remove</Button>
                     </div>
                   </div>
                 </div>
