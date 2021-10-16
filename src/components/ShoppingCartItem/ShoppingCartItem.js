@@ -18,7 +18,6 @@ function buildSelectOptions(unitsInStock) {
 
 function ShoppingCartItem({ id, img, title, price, quantity, unitsInStock }) {
   const { handleRemove, handleChange } = useContext(HomeContext);
-
   return (
     <div className="col">
       <div className="row flex-column">

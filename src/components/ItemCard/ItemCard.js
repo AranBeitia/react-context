@@ -35,10 +35,6 @@ function ItemCard({
   isFavorite,
   upVotes,
   downVotes,
-  // handleDownVote,
-  // handleUpVote,
-  // handleSetFavorite,
-  // handleAddToCart,
 }) {
   const {
     handleDownVote,
@@ -46,18 +42,6 @@ function ItemCard({
     handleSetFavorite,
     handleAddToCart,
   } = useContext(HomeContext);
-  // function onDownVote() {
-  //   handleDownVote(id);
-  // }
-  // function onUpVote() {
-  //   handleUpVote(id);
-  // }
-  // function onSetFavorite() {
-  //   handleSetFavorite(id);
-  // }
-  // function onAddToCart() {
-  //   handleAddToCart(id);
-  // }
 
   return (
     <article className="ItemCard col col-12 col-md-6 col-lg-4">

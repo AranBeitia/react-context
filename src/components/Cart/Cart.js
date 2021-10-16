@@ -13,7 +13,7 @@ function getCartTotal(cart) {
 function Cart() {
   const { cartItems } = useContext(HomeContext);
   return (
-    <aside>
+    <aside className="col col-4">
       <div className="row flex-column">
         <div className="col shopping__cart__header">
           <h2 className="h3 mt-2">Shopping Cart</h2>
