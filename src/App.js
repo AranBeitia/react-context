@@ -36,6 +36,8 @@ const actionTypes = {
   FETCH_INIT: "FETCH_INIT",
   FETCH_SUCCESS: "FETCH_SUCCESS",
   FETCH_ERROR: "FETCH_ERROR",
+  CART_ITEMS: "CART_ITEMS",
+  PRODUCT_ITEMS: "PRODUCT_ITEMS",
 };
 
 const initialState = {
@@ -69,6 +71,18 @@ function reducer(state, action) {
         loadingError: { ...action.payload },
       };
     }
+    case actionTypes.CART_ITEMS: {
+      return {
+        ...state,
+        cartItems: [...action.payload],
+      };
+    }
+    case actionTypes.PRODUCT_ITEMS: {
+      return {
+        ...state,
+        products: [...action.payload],
+      };
+    }
     default: {
       return state;
     }
@@ -79,24 +93,12 @@ function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { products, cartItems, isLoading, hasError, loadingError } = state;
 
-  // const [products, setProducts] = useState(() =>
-  //   loadLocalStorageItems(PRODUCTS_LOCAL_STORAGE_KEY, []),
-  // );
-  // const [cartItems, setCartItems] = useState(() =>
-  //   loadLocalStorageItems(CART_ITEMS_LOCAL_STORAGE_KEY, []),
-  // );
-
   useLocalStorage(products, PRODUCTS_LOCAL_STORAGE_KEY);
   useLocalStorage(cartItems, CART_ITEMS_LOCAL_STORAGE_KEY);
-
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [hasError, setHasError] = useState(false);
-  // const [loadingError, setLoadingError] = useState(null);
 
   useEffect(() => {
     if (products.length === 0) {
       dispatch({ type: actionTypes.FETCH_INIT });
-      // setIsLoading(true);
 
       api
         .getProducts()
@@ -105,17 +107,12 @@ function App() {
             type: actionTypes.FETCH_SUCCESS,
             payload: data,
           });
-          // setProducts(data);
-          // setIsLoading(false);
         })
         .catch((error) => {
           dispatch({
             type: actionTypes.FETCH_ERROR,
             payload: error.message,
           });
-          // setIsLoading(false);
-          // setHasError(true);
-          // setLoadingError(error.message);
         });
     }
   }, []);
@@ -139,13 +136,16 @@ function App() {
           quantity: item.quantity + 1,
         };
       });
-
-      cartItems(updatedCartItems);
+      dispatch({ type: actionTypes.CART_ITEMS, payload: updatedCartItems });
       return;
     }
 
     const updatedProduct = buildNewCartItem(foundProduct);
-    cartItems((prevState) => [...prevState, updatedProduct]);
+    dispatch({
+      type: actionTypes.CART_ITEMS,
+      payload: [...cartItems, updatedProduct],
+    });
+    // setCartItems((prevState) => [...prevState, updatedProduct]);
   }
 
   function handleChange(event, productId) {
@@ -159,14 +159,15 @@ function App() {
 
       return item;
     });
-
-    cartItems(updatedCartItems);
+    dispatch({
+      type: actionTypes.CART_ITEMS,
+      payload: [updatedCartItems],
+    });
   }
 
   function handleRemove(productId) {
     const updatedCartItems = cartItems.filter((item) => item.id !== productId);
-
-    cartItems(updatedCartItems);
+    dispatch({ type: actionTypes.CART_ITEMS, payload: updatedCartItems });
   }
 
   function handleDownVote(productId) {
@@ -190,8 +191,7 @@ function App() {
 
       return product;
     });
-
-    products(updatedProducts);
+    dispatch({ type: actionTypes.PRODUCT_ITEMS, payload: updatedProducts });
   }
 
   function handleUpVote(productId) {
@@ -214,8 +214,7 @@ function App() {
 
       return product;
     });
-
-    products(updatedProducts);
+    dispatch({ type: actionTypes.PRODUCT_ITEMS, payload: updatedProducts });
   }
 
   function handleSetFavorite(productId) {
@@ -229,12 +228,14 @@ function App() {
 
       return product;
     });
-
-    products(updatedProducts);
+    dispatch({ type: actionTypes.PRODUCT_ITEMS, payload: updatedProducts });
   }
 
   function saveNewProduct(newProduct) {
-    products((prevState) => [newProduct, ...prevState]);
+    dispatch({
+      type: actionTypes.PRODUCT_ITEMS,
+      payload: [...products, newProduct],
+    });
   }
 
   return (
