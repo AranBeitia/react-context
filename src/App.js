@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useReducer } from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import Home from "./pages/Home";
@@ -32,35 +32,90 @@ function buildNewCartItem(cartItem) {
 const PRODUCTS_LOCAL_STORAGE_KEY = "react-sc-state-products";
 const CART_ITEMS_LOCAL_STORAGE_KEY = "react-sc-state-cart-items";
 
+const actionTypes = {
+  FETCH_INIT: "FETCH_INIT",
+  FETCH_SUCCESS: "FETCH_SUCCESS",
+  FETCH_ERROR: "FETCH_ERROR",
+};
+
+const initialState = {
+  products: loadLocalStorageItems(PRODUCTS_LOCAL_STORAGE_KEY, []),
+  cartItems: loadLocalStorageItems(CART_ITEMS_LOCAL_STORAGE_KEY, []),
+  isLoading: false,
+  hasError: false,
+  loadingError: null,
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case actionTypes.FETCH_INIT: {
+      return {
+        ...state,
+        isLoading: true,
+      };
+    }
+    case actionTypes.FETCH_SUCCESS: {
+      return {
+        ...state,
+        products: [...action.payload],
+        isLoading: true,
+      };
+    }
+    case actionTypes.FETCH_ERROR: {
+      return {
+        ...state,
+        isLoading: false,
+        hasError: true,
+        loadingError: { ...action.payload },
+      };
+    }
+    default: {
+      return state;
+    }
+  }
+}
+
 function App() {
-  const [products, setProducts] = useState(() =>
-    loadLocalStorageItems(PRODUCTS_LOCAL_STORAGE_KEY, []),
-  );
-  const [cartItems, setCartItems] = useState(() =>
-    loadLocalStorageItems(CART_ITEMS_LOCAL_STORAGE_KEY, []),
-  );
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { products, cartItems, isLoading, hasError, loadingError } = state;
+
+  // const [products, setProducts] = useState(() =>
+  //   loadLocalStorageItems(PRODUCTS_LOCAL_STORAGE_KEY, []),
+  // );
+  // const [cartItems, setCartItems] = useState(() =>
+  //   loadLocalStorageItems(CART_ITEMS_LOCAL_STORAGE_KEY, []),
+  // );
 
   useLocalStorage(products, PRODUCTS_LOCAL_STORAGE_KEY);
   useLocalStorage(cartItems, CART_ITEMS_LOCAL_STORAGE_KEY);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasError, setHasError] = useState(false);
-  const [loadingError, setLoadingError] = useState(null);
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [hasError, setHasError] = useState(false);
+  // const [loadingError, setLoadingError] = useState(null);
 
   useEffect(() => {
     if (products.length === 0) {
-      setIsLoading(true);
+      dispatch({ type: actionTypes.FETCH_INIT });
+      // setIsLoading(true);
 
       api
         .getProducts()
         .then((data) => {
-          setProducts(data);
-          setIsLoading(false);
+          dispatch({
+            type: actionTypes.FETCH_SUCCESS,
+            payload: data,
+          });
+          // setProducts(data);
+          // setIsLoading(false);
         })
         .catch((error) => {
-          setIsLoading(false);
-          setHasError(true);
-          setLoadingError(error.message);
+          dispatch({
+            type: actionTypes.FETCH_ERROR,
+            payload: error.message,
+          });
+          // setIsLoading(false);
+          // setHasError(true);
+          // setLoadingError(error.message);
         });
     }
   }, []);
@@ -85,12 +140,12 @@ function App() {
         };
       });
 
-      setCartItems(updatedCartItems);
+      cartItems(updatedCartItems);
       return;
     }
 
     const updatedProduct = buildNewCartItem(foundProduct);
-    setCartItems((prevState) => [...prevState, updatedProduct]);
+    cartItems((prevState) => [...prevState, updatedProduct]);
   }
 
   function handleChange(event, productId) {
@@ -105,13 +160,13 @@ function App() {
       return item;
     });
 
-    setCartItems(updatedCartItems);
+    cartItems(updatedCartItems);
   }
 
   function handleRemove(productId) {
     const updatedCartItems = cartItems.filter((item) => item.id !== productId);
 
-    setCartItems(updatedCartItems);
+    cartItems(updatedCartItems);
   }
 
   function handleDownVote(productId) {
@@ -136,7 +191,7 @@ function App() {
       return product;
     });
 
-    setProducts(updatedProducts);
+    products(updatedProducts);
   }
 
   function handleUpVote(productId) {
@@ -160,7 +215,7 @@ function App() {
       return product;
     });
 
-    setProducts(updatedProducts);
+    products(updatedProducts);
   }
 
   function handleSetFavorite(productId) {
@@ -175,11 +230,11 @@ function App() {
       return product;
     });
 
-    setProducts(updatedProducts);
+    products(updatedProducts);
   }
 
   function saveNewProduct(newProduct) {
-    setProducts((prevState) => [newProduct, ...prevState]);
+    products((prevState) => [newProduct, ...prevState]);
   }
 
   return (
